@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>灵感卡片 InspoCard — 免费在线文字卡片生成器 · Text Quote Card Maker</title>
+<meta name="description" content="把文字一键变成精美卡片图：10 套模板、手写质感中文字体、竖排与长图拆分导出，纯本地渲染免注册无水印。Turn text into beautiful share cards in your browser — free, no sign-up, rendered 100% locally.">
+<meta name="keywords" content="文字卡片生成器,金句卡片,书摘卡片,小红书配图,日签,在线文字图片,quote card maker,text to image card">
+<link rel="canonical" href="https://tliens.github.io/inspo-card/">
+<link rel="alternate" hreflang="zh" href="https://tliens.github.io/inspo-card/?lang=zh">
+<link rel="alternate" hreflang="en" href="https://tliens.github.io/inspo-card/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://tliens.github.io/inspo-card/">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#171a24">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.3.0/400.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="InspoCard">
+<meta property="og:title" content="灵感卡片 InspoCard — 文字一键成卡">
+<meta property="og:description" content="免费在线文字卡片生成器：模板、手写字体、竖排、长图拆分，纯本地渲染。Free online quote-card maker, rendered 100% in your browser.">
+<meta property="og:url" content="https://tliens.github.io/inspo-card/">
+<meta property="og:image" content="https://tliens.github.io/inspo-card/og-image.png">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="InspoCard — Turn text into beautiful cards">
+<meta name="twitter:description" content="Free browser-based quote card maker: templates, handwritten Chinese fonts, vertical layout, long-image split. No upload, no sign-up.">
+<meta name="twitter:image" content="https://tliens.github.io/inspo-card/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"WebApplication","name":"灵感卡片 InspoCard","url":"https://tliens.github.io/inspo-card/","applicationCategory":"DesignApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"inLanguage":["zh-CN","en"],"description":"免费在线文字卡片生成器：把文字变成精美卡片图，支持模板、手写中文字体、竖排、长图拆分导出，纯浏览器本地渲染。"},
+ {"@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"这是吉光卡片官方网页版吗？","acceptedAnswer":{"@type":"Answer","text":"不是。灵感卡片是一个受吉光卡片启发的免费开源网页工具，与吉光卡片 App 及其开发团队没有任何关联。"}},
+  {"@type":"Question","name":"我输入的文字会被上传吗？","acceptedAnswer":{"@type":"Answer","text":"不会。所有渲染都在你的浏览器本地完成，文字不会上传到任何服务器；草稿仅保存在本机 localStorage。"}},
+  {"@type":"Question","name":"导出的图片清晰度如何？","acceptedAnswer":{"@type":"Answer","text":"默认 2 倍超采样导出：3:4 比例输出 2160×2880，长图与高清选项下最长边可达数千像素，适合社交平台原图直出。"}},
+  {"@type":"Question","name":"长图拆分是什么？","acceptedAnswer":{"@type":"Answer","text":"选择「长图」比例后，可把超长文字卡片按 3:4 均匀切成多张，一键批量下载，适合小红书、微信朋友圈多图发布。"}},
+  {"@type":"Question","name":"免费吗？有水印吗？","acceptedAnswer":{"@type":"Answer","text":"完全免费、无需注册、导出无强制水印。卡片上的署名水印默认可自由编辑或删除。"}}
+ ]}
+]}
+</script>
+<style>
+:root{
+  --bg:#f4f2ee; --bg2:#ffffff; --ink:#26221c; --sub:#8a8274; --line:#e6e0d4;
+  --card:#ffffff; --accent:#b4552d; --accent-soft:rgba(180,85,45,.12);
+  --shadow:0 10px 30px rgba(40,32,20,.10); --radius:14px;
+}
+[data-theme="dark"]{
+  --bg:#14161e; --bg2:#1b1e29; --ink:#e8e9f0; --sub:#8b90a5; --line:#2a2e3d;
+  --card:#1b1e29; --accent:#e08a5e; --accent-soft:rgba(224,138,94,.16);
+  --shadow:0 10px 30px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+  background:var(--bg); color:var(--ink); min-height:100vh;
+  background-image:radial-gradient(circle at 20% -10%, var(--accent-soft), transparent 40%);
+}
+button{font-family:inherit; cursor:pointer;}
+input,textarea,select{font-family:inherit;}
+a{color:var(--accent); text-decoration:none;}
+/* ===== header ===== */
+header{
+  display:flex; align-items:center; gap:12px; padding:14px 20px;
+  border-bottom:1px solid var(--line); background:var(--bg2);
+  position:sticky; top:0; z-index:50;
+}
+.brand{display:flex; align-items:baseline; gap:9px; font-weight:800; font-size:19px; letter-spacing:.5px;}
+.brand .logo{font-size:20px;}
+.brand small{font-weight:500; font-size:12px; color:var(--sub);}
+header .sp{flex:1;}
+.hbtn{
+  border:1px solid var(--line); background:var(--card); color:var(--ink);
+  border-radius:999px; padding:7px 14px; font-size:13px; display:inline-flex; align-items:center; gap:6px;
+}
+.hbtn:hover{border-color:var(--accent);}
+#fontStatus{font-size:12px; color:var(--sub); padding:6px 10px; border-radius:999px; background:var(--accent-soft); display:none;}
+/* ===== layout ===== */
+main{display:grid; grid-template-columns:392px 1fr; gap:0; min-height:calc(100vh - 61px);}
+#panel{border-right:1px solid var(--line); background:var(--bg2); display:flex; flex-direction:column;}
+#tabs{display:flex; border-bottom:1px solid var(--line); position:sticky; top:60px; background:var(--bg2); z-index:10;}
+#tabs button{
+  flex:1; padding:13px 0; border:0; background:none; color:var(--sub); font-size:14px; font-weight:600;
+  border-bottom:2px solid transparent;
+}
+#tabs button.on{color:var(--accent); border-bottom-color:var(--accent);}
+.tabBody{padding:18px 20px 40px; overflow-y:auto; flex:1; display:none;}
+.tabBody.on{display:block;}
+label.f{display:block; font-size:13px; font-weight:600; color:var(--sub); margin:16px 0 7px;}
+label.f:first-child{margin-top:0;}
+textarea, input[type=text]{
+  width:100%; border:1px solid var(--line); border-radius:10px; background:var(--bg);
+  color:var(--ink); padding:11px 12px; font-size:14px; line-height:1.6; resize:vertical;
+}
+textarea:focus, input:focus{outline:2px solid var(--accent-soft); border-color:var(--accent);}
+#bodyInput{min-height:190px; font-size:15px;}
+.cnt{font-size:12px; color:var(--sub); text-align:right; margin-top:4px;}
+.zbtn{
+  border:1px solid var(--line); background:var(--bg); color:var(--ink); border-radius:10px;
+  padding:9px 14px; font-size:13px; font-weight:600;
+}
+.zbtn:hover{border-color:var(--accent); color:var(--accent);}
+.zbtn.primary{background:var(--accent); border-color:var(--accent); color:#fff;}
+.zbtn.primary:hover{filter:brightness(1.08); color:#fff;}
+.zbtn:disabled{opacity:.45; cursor:not-allowed;}
+/* template grid */
+#tplGrid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.tpl{
+  border:2px solid var(--line); border-radius:12px; background:var(--bg); padding:6px; text-align:center; position:relative;
+}
+.tpl.on{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+.tpl canvas{width:100%; border-radius:7px; display:block;}
+.tpl .tn{font-size:12px; font-weight:600; margin-top:5px; color:var(--ink); white-space:nowrap; overflow:hidden;}
+/* palette */
+#paletteRow{display:flex; flex-wrap:wrap; gap:10px; margin-top:4px;}
+.palBtn{
+  width:38px; height:38px; border-radius:50%; border:2px solid var(--line); position:relative; overflow:hidden;
+}
+.palBtn .dot{position:absolute; right:3px; bottom:3px; width:12px; height:12px; border-radius:50%;}
+.palBtn.on{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+h3.sec{font-size:13px; font-weight:700; color:var(--sub); text-transform:uppercase; letter-spacing:1px; margin:26px 0 10px;}
+h3.sec:first-child{margin-top:0;}
+/* font cards */
+#fontGrid{display:grid; grid-template-columns:repeat(2,1fr); gap:9px;}
+.fontCard{
+  border:2px solid var(--line); border-radius:11px; background:var(--bg); padding:11px 12px; text-align:left;
+}
+.fontCard.on{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft);}
+.fontCard .fn{font-size:17px; line-height:1.35;}
+.fontCard .fk{font-size:11px; color:var(--sub); margin-top:3px;}
+/* sliders */
+.sliderRow{display:flex; align-items:center; gap:10px; margin:8px 0 2px;}
+.sliderRow input[type=range]{flex:1; accent-color:var(--accent);}
+.sliderRow .val{font-size:12px; color:var(--sub); width:38px; text-align:right; font-variant-numeric:tabular-nums;}
+/* segmented */
+.seg{display:flex; flex-wrap:wrap; gap:7px;}
+.seg button{
+  border:1.5px solid var(--line); background:var(--bg); color:var(--sub);
+  border-radius:9px; padding:8px 12px; font-size:13px; font-weight:600;
+}
+.seg button.on{border-color:var(--accent); color:var(--accent); background:var(--accent-soft);}
+/* export tab */
+#exportInfo{font-size:13px; color:var(--sub); line-height:1.8; background:var(--bg); border:1px dashed var(--line); border-radius:10px; padding:12px 14px;}
+#exportInfo b{color:var(--ink);}
+.expBtns{display:flex; flex-direction:column; gap:10px; margin-top:16px;}
+.expBtns .zbtn{padding:13px; font-size:15px;}
+.hint{font-size:12px; color:var(--sub); line-height:1.7; margin-top:10px;}
+/* ===== stage ===== */
+#stage{
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  padding:26px 20px 60px; overflow-y:auto; max-height:calc(100vh - 61px);
+  background:radial-gradient(circle at 50% 20%, var(--accent-soft), transparent 55%), var(--bg);
+}
+#stageInner{position:relative; filter:drop-shadow(0 18px 40px rgba(30,24,14,.25));}
+#cv{display:block; border-radius:6px; max-width:min(640px, 92vw); max-height:calc(100vh - 200px); width:auto; height:auto;}
+#stageBar{margin-top:16px; font-size:12.5px; color:var(--sub); display:flex; gap:14px; align-items:center; flex-wrap:wrap; justify-content:center;}
+#stageBar .chip{background:var(--bg2); border:1px solid var(--line); border-radius:999px; padding:4px 12px;}
+/* ===== footer / faq ===== */
+footer{border-top:1px solid var(--line); background:var(--bg2); padding:34px 22px 46px;}
+.footWrap{max-width:1060px; margin:0 auto;}
+footer h2{font-size:17px; margin-bottom:16px;}
+.faqItem{border:1px solid var(--line); border-radius:11px; margin-bottom:10px; background:var(--bg);}
+.faqItem summary{padding:13px 16px; font-size:14px; font-weight:600; cursor:pointer; list-style:none;}
+.faqItem summary::before{content:"＋ "; color:var(--accent);}
+.faqItem[open] summary::before{content:"− ";}
+.faqItem p{padding:0 16px 14px; font-size:13.5px; color:var(--sub); line-height:1.8;}
+.footNote{margin-top:26px; font-size:12.5px; color:var(--sub); line-height:2;}
+/* toast */
+#toast{
+  position:fixed; left:50%; bottom:34px; transform:translateX(-50%) translateY(20px);
+  background:var(--ink); color:var(--bg); padding:11px 22px; border-radius:999px; font-size:14px;
+  opacity:0; pointer-events:none; transition:.25s; z-index:99;
+}
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+/* mobile */
+@media (max-width:920px){
+  main{grid-template-columns:1fr;}
+  #stage{order:-1; max-height:none; padding:18px 14px 22px; position:sticky; top:60px; z-index:5; border-bottom:1px solid var(--line);}
+  #cv{max-width:min(430px, 88vw); max-height:46vh;}
+  #panel{border-right:0;}
+  #tabs{top:0; position:static;}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="logo">✦</span><span data-i18n="brandName">灵感卡片</span><small data-i18n="tagline">文字 · 一键成卡</small></div>
+  <div class="sp"></div>
+  <span id="fontStatus" data-i18n="fontLoading">字体加载中…</span>
+  <button class="hbtn" id="btnLang" title="Language">中 / EN</button>
+  <button class="hbtn" id="btnTheme" title="Theme">🌗</button>
+  <a class="hbtn" href="https://github.com/Tliens/inspo-card" target="_blank" rel="noopener">GitHub ↗</a>
+</header>
+
+<main>
+  <aside id="panel">
+    <div id="tabs">
+      <button id="tabBtnText" class="on" data-i18n="tabText">✍️ 文字</button>
+      <button id="tabBtnTpl" data-i18n="tabTpl">🎴 模板</button>
+      <button id="tabBtnStyle" data-i18n="tabStyle">🎨 样式</button>
+      <button id="tabBtnExp" data-i18n="tabExp">⬇️ 导出</button>
+    </div>
+
+    <div class="tabBody on" id="tabText">
+      <label class="f" for="bodyInput" data-i18n="hBody">正文</label>
+      <textarea id="bodyInput" data-i18n-ph="phBody" placeholder="在这里写下你想放进卡片的句子…" maxlength="5000"></textarea>
+      <div class="cnt"><span id="charCnt">0</span></div>
+      <label class="f" for="titleInput" data-i18n="hTitle">标题（可选）</label>
+      <input type="text" id="titleInput" data-i18n-ph="phTitle" placeholder="如：深夜札记" maxlength="40">
+      <label class="f" for="authorInput" data-i18n="hAuthor">作者 / 出处（可选）</label>
+      <input type="text" id="authorInput" data-i18n-ph="phAuthor" placeholder="如：木心《从前慢》" maxlength="40">
+      <label class="f" for="markInput" data-i18n="hMark">署名水印（可选）</label>
+      <input type="text" id="markInput" data-i18n-ph="phMark" placeholder="如：@你的名字" maxlength="24">
+      <div style="margin-top:18px"><button class="zbtn" id="btnRandom" data-i18n="surprise">🎲 随机灵感</button>
+      <button class="zbtn" id="btnClear" data-i18n="clear">清空</button></div>
+    </div>
+
+    <div class="tabBody" id="tabTpl">
+      <h3 class="sec" data-i18n="secTpl">模板</h3>
+      <div id="tplGrid"></div>
+      <h3 class="sec" data-i18n="secPal">配色</h3>
+      <div id="paletteRow"></div>
+    </div>
+
+    <div class="tabBody" id="tabStyle">
+      <h3 class="sec" data-i18n="secFont">字体</h3>
+      <div id="fontGrid"></div>
+      <h3 class="sec" data-i18n="secType">排版</h3>
+      <label class="f" data-i18n="hSize">字号</label>
+      <div class="sliderRow"><input type="range" id="sizeRange" min="30" max="64" value="44"><span class="val" id="sizeVal">44</span></div>
+      <label class="f" data-i18n="hLine">行距</label>
+      <div class="sliderRow"><input type="range" id="lhRange" min="130" max="230" value="175"><span class="val" id="lhVal">1.75</span></div>
+      <label class="f" data-i18n="hSpacing">字距</label>
+      <div class="sliderRow"><input type="range" id="lsRange" min="-1" max="10" value="1"><span class="val" id="lsVal">1</span></div>
+      <label class="f" data-i18n="hAlign">对齐</label>
+      <div class="seg" id="alignSeg">
+        <button data-v="left" data-i18n="alignLeft">左对齐</button>
+        <button data-v="center" class="on" data-i18n="alignCenter">居中</button>
+        <button data-v="right" data-i18n="alignRight">右对齐</button>
+      </div>
+      <label class="f" data-i18n="hRatio">卡片比例</label>
+      <div class="seg" id="ratioSeg">
+        <button data-v="3:4" class="on">3:4</button>
+        <button data-v="1:1">1:1</button>
+        <button data-v="4:3">4:3</button>
+        <button data-v="9:16">9:16</button>
+        <button data-v="16:9">16:9</button>
+        <button data-v="auto" data-i18n="ratioAuto">长图</button>
+      </div>
+      <p class="hint" data-i18n="ratioHint">「长图」按文字量自动扩展高度，可在导出页切分为多张 3:4。</p>
+    </div>
+
+    <div class="tabBody" id="tabExp">
+      <h3 class="sec" data-i18n="secExp">导出</h3>
+      <div id="exportInfo">—</div>
+      <label class="f" data-i18n="hScale">清晰度</label>
+      <div class="seg" id="scaleSeg">
+        <button data-v="1">1× <span id="scaleInfo1">1080 宽</span></button>
+        <button data-v="2" class="on">2× <span id="scaleInfo2">2160 宽</span></button>
+      </div>
+      <div class="expBtns">
+        <button class="zbtn primary" id="btnDownload" data-i18n="download">⬇️ 下载 PNG</button>
+        <button class="zbtn" id="btnCopy" data-i18n="copy">⧉ 复制到剪贴板</button>
+        <button class="zbtn" id="btnSplit" data-i18n="split">✂️ 切分导出</button>
+      </div>
+      <p class="hint" data-i18n="expHint">切分仅对「长图」比例可用：按 3:4 均匀切片批量下载，适合小红书 / 朋友圈多图发布。</p>
+    </div>
+  </aside>
+
+  <section id="stage">
+    <div id="stageInner"><canvas id="cv" width="1080" height="1440"></canvas></div>
+    <div id="stageBar">
+      <span class="chip" id="chipSize">1080 × 1440</span>
+      <span class="chip" data-i18n="privacyChip">🔒 纯本地渲染 · 文字不上传</span>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footWrap">
+    <h2 data-i18n="faqTitle">常见问题</h2>
+    <details class="faqItem"><summary data-i18n="q1">这是吉光卡片官方网页版吗？</summary><p data-i18n="a1">不是。灵感卡片是一个受吉光卡片启发的免费网页工具，与吉光卡片 App 及其开发团队没有任何关联。</p></details>
+    <details class="faqItem"><summary data-i18n="q2">我输入的文字会被上传吗？</summary><p data-i18n="a2">不会。所有渲染都在你的浏览器本地完成，文字不会上传到任何服务器；草稿仅保存在本机 localStorage。</p></details>
+    <details class="faqItem"><summary data-i18n="q3">导出的图片清晰度如何？</summary><p data-i18n="a3">默认 2 倍超采样导出：3:4 比例输出 2160×2880，长图与高清选项下最长边可达数千像素，适合社交平台原图直出。</p></details>
+    <details class="faqItem"><summary data-i18n="q4">长图拆分是什么？</summary><p data-i18n="a4">选择「长图」比例后，可把超长文字卡片按 3:4 均匀切成多张，一键批量下载，适合小红书、微信朋友圈多图发布。</p></details>
+    <details class="faqItem"><summary data-i18n="q5">免费吗？有水印吗？</summary><p data-i18n="a5">完全免费、无需注册、导出无强制水印。卡片上的署名水印默认可自由编辑或删除。</p></details>
+    <p class="footNote">
+      <span data-i18n="footInsp">灵感：iOS 应用「吉光卡片」— 一个把文字变美的好工具。本项目为其核心理念的免费网页实现。</span><br>
+      <span data-i18n="footLocal">🔒 纯浏览器本地渲染，无账号、无追踪上传；界面支持中英双语。</span>
+    </p>
+  </div>
+</footer>
+<div id="toast"></div>
+
+<script type="module">
+/* ================================================================
+   灵感卡片 InspoCard — 文字卡片生成器（吉光卡片理念的网页实现）
+   Pure-canvas rendering, no runtime dependencies except lazy webfonts.
+   ================================================================ */
+
+/* ---------------- i18n ---------------- */
+const L = {
+zh:{
+  brandName:'灵感卡片', tagline:'文字 · 一键成卡', fontLoading:'字体加载中…',
+  tabText:'✍️ 文字', tabTpl:'🎴 模板', tabStyle:'🎨 样式', tabExp:'⬇️ 导出',
+  hBody:'正文', phBody:'在这里写下你想放进卡片的句子…',
+  hTitle:'标题（可选）', phTitle:'如：深夜札记',
+  hAuthor:'作者 / 出处（可选）', phAuthor:'如：木心《从前慢》',
+  hMark:'署名水印（可选）', phMark:'如：@你的名字',
+  surprise:'🎲 随机灵感', clear:'清空',
+  secTpl:'模板', secPal:'配色', secFont:'字体', secType:'排版', secExp:'导出',
+  hSize:'字号', hLine:'行距', hSpacing:'字距', hAlign:'对齐', hRatio:'卡片比例',
+  alignLeft:'左对齐', alignCenter:'居中', alignRight:'右对齐', ratioAuto:'长图',
+  ratioHint:'「长图」按文字量自动扩展高度，可在导出页切分为多张 3:4。',
+  hScale:'清晰度', download:'⬇️ 下载 PNG', copy:'⧉ 复制到剪贴板', split:'✂️ 切分导出',
+  expHint:'切分仅对「长图」比例可用：按 3:4 均匀切片批量下载，适合小红书 / 朋友圈多图发布。',
+  privacyChip:'🔒 纯本地渲染 · 文字不上传', faqTitle:'常见问题',
+  q1:'这是吉光卡片官方网页版吗？',
+  a1:'不是。灵感卡片是一个受吉光卡片启发的免费网页工具，与吉光卡片 App 及其开发团队没有任何关联。',
+  q2:'我输入的文字会被上传吗？',
+  a2:'不会。所有渲染都在你的浏览器本地完成，文字不会上传到任何服务器；草稿仅保存在本机 localStorage。',
+  q3:'导出的图片清晰度如何？',
+  a3:'默认 2 倍超采样导出：3:4 比例输出 2160×2880，长图与高清选项下最长边可达数千像素，适合社交平台原图直出。',
+  q4:'长图拆分是什么？',
+  a4:'选择「长图」比例后，可把超长文字卡片按 3:4 均匀切成多张，一键批量下载，适合小红书、微信朋友圈多图发布。',
+  q5:'免费吗？有水印吗？',
+  a5:'完全免费、无需注册、导出无强制水印。卡片上的署名水印默认可自由编辑或删除。',
+  footInsp:'灵感：iOS 应用「吉光卡片」— 一个把文字变美的好工具。本项目为其核心理念的免费网页实现。',
+  footLocal:'🔒 纯浏览器本地渲染，无账号、无追踪上传；界面支持中英双语。',
+  copied:'已复制 ✓', copyFail:'复制失败，请改用下载', saved:'已下载 ✓', cleared:'已清空',
+  dice:'已填入随机灵感 ✓', splitNeed:'请先选择「长图」比例', splitDone:'已切分下载', loading:'加载中…',
+  docTitle:'灵感卡片 InspoCard — 免费在线文字卡片生成器',
+  // templates
+  t_paper:'素笺', t_quote:'书摘', t_journal:'手帐', t_daily:'日签', t_vscroll:'竖排',
+  t_night:'暗夜', t_gradient:'渐变', t_magazine:'杂志', t_sticky:'便利贴', t_minimal:'极简',
+  info1:'尺寸', info2:'清晰度', info3:'切分', noSplit:'仅长图比例可用', pieces:'张',
+  // weekdays
+  wd:'日一二三四五六',
+},
+en:{
+  brandName:'InspoCard', tagline:'Text → beautiful card', fontLoading:'Loading font…',
+  tabText:'✍️ Text', tabTpl:'🎴 Layout', tabStyle:'🎨 Style', tabExp:'⬇️ Export',
+  hBody:'Body', phBody:'Write the words you want on the card…',
+  hTitle:'Title (optional)', phTitle:'e.g. Midnight notes',
+  hAuthor:'Author / Source (optional)', phAuthor:'e.g. Oscar Wilde',
+  hMark:'Signature (optional)', phMark:'e.g. @yourname',
+  surprise:'🎲 Random idea', clear:'Clear',
+  secTpl:'Layouts', secPal:'Palette', secFont:'Fonts', secType:'Typography', secExp:'Export',
+  hSize:'Font size', hLine:'Line height', hSpacing:'Letter spacing', hAlign:'Align', hRatio:'Card ratio',
+  alignLeft:'Left', alignCenter:'Center', alignRight:'Right', ratioAuto:'Long',
+  ratioHint:'“Long” grows with your text — slice it into 3:4 pieces on the Export tab.',
+  hScale:'Resolution', download:'⬇️ Download PNG', copy:'⧉ Copy image', split:'✂️ Split export',
+  expHint:'Splitting works with the “Long” ratio: slices a tall card into equal 3:4 pieces for multi-image posts.',
+  privacyChip:'🔒 Rendered locally · nothing uploaded', faqTitle:'FAQ',
+  q1:'Is this the official web version of Jiguang Card?',
+  a1:'No. InspoCard is a free, open web tool inspired by the iOS app 吉光卡片 (Jiguang Card). It is not affiliated with the original app or its team.',
+  q2:'Is my text uploaded anywhere?',
+  a2:'Never. Everything renders locally in your browser. Nothing is sent to any server; drafts live only in your browser storage.',
+  q3:'How sharp are exported images?',
+  a3:'Exports are supersampled 2× by default (2160×2880 for 3:4). Long cards can reach several thousand pixels — crisp enough for social platforms.',
+  q4:'What is long-image splitting?',
+  a4:'With the “Long” ratio, a tall card can be split into equal 3:4 pieces and downloaded in one batch — handy for multi-image posts.',
+  q5:'Is it free? Any watermark?',
+  a5:'Completely free, no sign-up, no forced watermark. The signature line is optional and fully editable.',
+  footInsp:'Inspired by the iOS app 吉光卡片 (Jiguang Card) — a lovely tool that makes words beautiful. This is a free web take on that idea.',
+  footLocal:'🔒 Runs entirely in your browser. No account, no upload; UI available in English and Chinese.',
+  copied:'Copied ✓', copyFail:'Copy failed — use Download', saved:'Saved ✓', cleared:'Cleared',
+  dice:'Random idea filled ✓', splitNeed:'Choose the “Long” ratio first', splitDone:'Slices downloaded', loading:'Loading…',
+  docTitle:'InspoCard — Free Online Quote Card Maker',
+  t_paper:'Paper', t_quote:'Quote', t_journal:'Journal', t_daily:'Daily', t_vscroll:'Vertical',
+  t_night:'Night', t_gradient:'Gradient', t_magazine:'Editorial', t_sticky:'Sticky', t_minimal:'Minimal',
+  info1:'Size', info2:'Resolution', info3:'Split', noSplit:'Long ratio only', pieces:'',
+  wd:'SunMonTueWedThuFriSat',
+}};
+
+/* ---------------- palettes ---------------- */
+const PALETTES = [
+ {k:'xuan',    zh:'宣纸', en:'Rice',    bg:'#f7f2e7', text:'#3b352c', sub:'#93876f', accent:'#b4552d', line:'#e3d9c2'},
+ {k:'moon',    zh:'月白', en:'Moon',    bg:'#f1f4f0', text:'#2e3a35', sub:'#7f8d85', accent:'#46796b', line:'#dce3da'},
+ {k:'celadon', zh:'青瓷', en:'Celadon', bg:'#e7efe9', text:'#274238', sub:'#74907f', accent:'#3e8f6e', line:'#d2e1d4'},
+ {k:'crimson', zh:'绯红', en:'Crimson', bg:'#f8ece6', text:'#432b28', sub:'#a08078', accent:'#c34a36', line:'#eedbd1'},
+ {k:'sakura',  zh:'樱粉', en:'Sakura',  bg:'#faeef1', text:'#4c3040', sub:'#ab8494', accent:'#d16a86', line:'#f1dbe1'},
+ {k:'moss',    zh:'苔绿', en:'Moss',    bg:'#edf1e4', text:'#37422c', sub:'#87927a', accent:'#6b8f4e', line:'#dee4cf'},
+ {k:'gilt',    zh:'鎏金', en:'Gilt',    bg:'#221f1a', text:'#ead9b5', sub:'#96896c', accent:'#d3a84c', line:'#3a352b', dark:true},
+ {k:'midnight',zh:'黛夜', en:'Night',   bg:'#161a26', text:'#e4e7f2', sub:'#7d85a0', accent:'#8296f7', line:'#2a3044', dark:true},
+];
+
+/* ---------------- fonts ---------------- */
+const FONTS = [
+ {k:'serif', zh:'宋体 · 书卷', en:'Serif',      fam:'Noto Serif SC', stack:'"Noto Serif SC","Songti SC","SimSun",serif', css:'https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.3.0/400.css'},
+ {k:'kai',   zh:'楷体 · 手写', en:'Kai (system)',fam:'Kaiti SC',      stack:'"Kaiti SC","STKaiti","KaiTi","DFKai-SB","serif"', css:null},
+ {k:'mao',   zh:'毛笔 · 楷',   en:'Brush Kai',  fam:'Ma Shan Zheng', stack:'"Ma Shan Zheng","Kaiti SC",serif', css:'https://cdn.jsdelivr.net/npm/@fontsource/ma-shan-zheng@5.3.1/400.css'},
+ {k:'xing',  zh:'行书',        en:'Running',    fam:'Zhi Mang Xing', stack:'"Zhi Mang Xing","Kaiti SC",serif', css:'https://cdn.jsdelivr.net/npm/@fontsource/zhi-mang-xing@5.3.0/400.css'},
+ {k:'ying',  zh:'硬笔 · 钢笔', en:'Fountain',   fam:'Long Cang',     stack:'"Long Cang","Kaiti SC",serif', css:'https://cdn.jsdelivr.net/npm/@fontsource/long-cang@5.3.0/400.css'},
+ {k:'sans',  zh:'黑体 · 现代', en:'Sans',       fam:'PingFang SC',   stack:'"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif', css:null},
+];
+const fontLinks = new Set(['serif']);  /* serif css 已在 <head> 预载 */
+const fontState = {k:null, busy:false};
+
+/* ---------------- ratios ---------------- */
+const RATIOS = {
+ '3:4':{w:1080,h:1440}, '1:1':{w:1080,h:1080}, '4:3':{w:1440,h:1080},
+ '9:16':{w:1080,h:1920}, '16:9':{w:1920,h:1080}, 'auto':null,
+};
+
+/* ---------------- state ---------------- */
+const state = {
+  body:'从前的日色变得慢，\n车、马、邮件都慢，\n一生只够爱一个人。',
+  title:'', author:'木心《从前慢》', mark:'@灵感卡片',
+  tpl:'paper', pal:0, font:'serif',
+  size:44, lh:1.75, ls:1, align:'center', ratio:'3:4', scale:2,
+};
+
+/* ---------------- tiny utils ---------------- */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const clamp = (v,a,b) => Math.max(a, Math.min(b,v));
+const debounce = (fn,ms)=>{ let h; return (...a)=>{ clearTimeout(h); h=setTimeout(()=>fn(...a),ms); }; };
+function toast(msg){ const el=$('#toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(toast.h); toast.h=setTimeout(()=>el.classList.remove('show'),1600); }
+function t(k){ return (L[lang] && L[lang][k] != null) ? L[lang][k] : (L.zh[k] ?? k); }
+function hex2rgb(h){ h=h.replace('#',''); if(h.length===3) h=[...h].map(c=>c+c).join(''); return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+function mix(h1,h2,r){ const a=hex2rgb(h1),b=hex2rgb(h2); return `rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*r)).join(',')})`; }
+function rgba(h,a){ const [r,g,b]=hex2rgb(h); return `rgba(${r},${g},${b},${a})`; }
+function mulberry32(seed){ let a=seed>>>0; return function(){ a|=0; a=a+0x6D2B79F5|0; let x=Math.imul(a^a>>>15,1|a); x=x+Math.imul(x^x>>>7,61|x)^x; return ((x^x>>>14)>>>0)/4294967296; }; }
+function hashStr(s){ let h=2166136261; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619);} return h>>>0; }
+
+/* ---------------- canvas helpers ---------------- */
+function rr(ctx,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+let noiseCv=null;
+function noise(ctx,W,H,alpha){
+  if(!noiseCv){
+    noiseCv=document.createElement('canvas'); noiseCv.width=noiseCv.height=140;
+    const nx=noiseCv.getContext('2d'); const id=nx.createImageData(140,140);
+    for(let i=0;i<id.data.length;i+=4){ const v=90+Math.random()*110|0; id.data[i]=id.data[i+1]=id.data[i+2]=v; id.data[i+3]=255; }
+    nx.putImageData(id,0,0);
+  }
+  ctx.save(); ctx.globalAlpha=alpha; ctx.globalCompositeOperation='overlay';
+  ctx.fillStyle=ctx.createPattern(noiseCv,'repeat'); ctx.fillRect(0,0,W,H); ctx.restore();
+}
+function setLS(ctx,v){ try{ ctx.letterSpacing = v+'px'; }catch(e){} }
+function unitsOf(str){
+  const out=[];
+  for(const w of str.split(/(\s+)/)){
+    if(!w) continue;
+    if(/^\s+$/.test(w)) out.push(' ');
+    else if(/[^\x00-\xff]/.test(w)){ for(const ch of w) out.push(ch); }
+    else out.push(w);
+  }
+  return out;
+}
+function wrapLines(ctx,text,maxW){
+  const out=[];
+  for(const seg of String(text).split('\n')){
+    let line='';
+    for(const u of unitsOf(seg)){
+      const trial=line+u;
+      if(ctx.measureText(trial).width>maxW && line.trim()){
+        out.push(line.replace(/\s+$/,''));
+        line = u===' ' ? '' : u.replace(/^\s+/,'');
+      } else line=trial;
+    }
+    out.push(line.replace(/\s+$/,''));
+  }
+  return out;
+}
+/* fit body text into a box; shrinks then ellipsis. font must be set via setF before call */
+function fitBody(ctx,text,maxW,maxH,base,lh){
+  const setF=s=>{ ctx.font=`400 ${s}px ${FONTS.find(f=>f.k===state.font).stack}`; };
+  const min=Math.max(3,base*0.52);
+  for(let size=base;size>=min;size-=2){
+    setF(size);
+    const lines=wrapLines(ctx,text,maxW);
+    const lhPx=size*lh;
+    if(lines.length*lhPx<=maxH) return {lines,size,lhPx,clipped:false};
+  }
+  setF(min);
+  let lines=wrapLines(ctx,text,maxW);
+  const lhPx=min*lh;
+  const maxLines=Math.max(1,Math.floor(maxH/lhPx));
+  let clipped=false;
+  if(lines.length>maxLines){
+    lines=lines.slice(0,maxLines); clipped=true;
+    let last=lines[maxLines-1];
+    while(last.length>1 && ctx.measureText(last+'…').width>maxW) last=last.slice(0,-1);
+    lines[maxLines-1]=last.replace(/\s+$/,'')+'…';
+  }
+  return {lines,size:min,lhPx,clipped};
+}
+window.__lastFit = null; /* debug */
+function drawLines(ctx,lines,x,y,maxW,lhPx,align){
+  ctx.textBaseline='top'; ctx.textAlign=align;
+  lines.forEach((ln,i)=>ctx.fillText(ln, align==='center'?x+maxW/2 : align==='right'?x+maxW : x, y+i*lhPx));
+  ctx.textBaseline='alphabetic'; ctx.textAlign='left';
+}
+function bodyFont(px){ return `400 ${px}px ${FONTS.find(f=>f.k===state.font).stack}`; }
+function todayStr(){
+  const d=new Date();
+  if(lang==='zh'){
+    return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} · 星期${t('wd')[d.getDay()]}`;
+  }
+  const wd=t('wd').slice(d.getDay()*3,d.getDay()*3+3);
+  return `${wd} · ${d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}`;
+}
+
+/* ---------------- content measurements shared by templates ---------------- */
+function markOf(){ return (state.mark||'').trim(); }
+function authorOf(){ return (state.author||'').trim(); }
+
+/* ---------------- templates ---------------- */
+const TEMPLATES=[
+
+/* 1 素笺 paper */
+{k:'paper', draw(ctx,E){
+  const {W,H,S,pal}=E, pad=Math.round(96*S), bw=W-pad*2;
+  ctx.fillStyle=pal.bg; ctx.fillRect(0,0,W,H); noise(ctx,W,H,pal.dark?0.05:0.06);
+  // double frame
+  ctx.strokeStyle=pal.line; ctx.lineWidth=Math.max(1,1.5*S);
+  ctx.strokeRect(pad*0.55,pad*0.55,W-pad*1.1,H-pad*1.1);
+  ctx.strokeStyle=rgba(pal.accent,0.55); ctx.lineWidth=Math.max(1,1*S);
+  ctx.strokeRect(pad*0.55+8*S,pad*0.55+8*S,W-pad*1.1-16*S,H-pad*1.1-16*S);
+  // content block, vertically centered
+  const tH=E.titleBlock(0,bw), aH=authorOf()?Math.round(52*S):0;
+  const bBase=state.size*S;
+  ctx.save(); setLS(ctx,state.ls*S);
+  const fit=fitBody(ctx,state.body||'…',bw,Math.max(10*S,H-pad*2-tH-aH-120*S),bBase,state.lh);
+  setLS(ctx,state.ls*S);
+  const contentH=tH+fit.lines.length*fit.lhPx+(authorOf()?56*S:0);
+  let y=(H-contentH)/2;
+  y+=E.titleBlock(y,bw);
+  ctx.font=bodyFont(fit.size); ctx.fillStyle=pal.text;
+  drawLines(ctx,fit.lines,pad,y,bw,fit.lhPx,state.align);
+  y+=fit.lines.length*fit.lhPx;
+  if(authorOf()){
+    y+=26*S; ctx.font=`400 ${Math.round(26*S)}px ${FONTS[0].stack}`; ctx.fillStyle=pal.sub; ctx.textAlign=state.align;
+    ctx.textBaseline='top'; ctx.fillText((lang==='zh'?'—— ':'—— ')+authorOf(), state.align==='center'?W/2:state.align==='right'?W-pad:pad, y);
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+  ctx.restore(); setLS(ctx,0);
+  // ornament: two rules + diamond
+  const oy=Math.round(pad*1.32), ow=Math.round(120*S), dw=Math.round(7*S);
+  ctx.strokeStyle=pal.line; ctx.lineWidth=Math.max(1,1.2*S);
+  ctx.beginPath(); ctx.moveTo(W/2-ow-dw*2,oy); ctx.lineTo(W/2-dw*2,oy);
+  ctx.moveTo(W/2+dw*2,oy); ctx.lineTo(W/2+ow+dw*2,oy); ctx.stroke();
+  ctx.save(); ctx.translate(W/2,oy); ctx.rotate(Math.PI/4);
+  ctx.fillStyle=pal.accent; ctx.fillRect(-dw/2,-dw/2,dw,dw); ctx.restore();
+  E.markLine(pad, H-pad*0.8, bw);
+}},
+
+/* 2 书摘 quote */
+{k:'quote', draw(ctx,E){
+  const {W,H,S,pal}=E, pad=Math.round(110*S), bw=W-pad*2;
+  ctx.fillStyle=pal.bg; ctx.fillRect(0,0,W,H); noise(ctx,W,H,0.05);
+  // big quotation mark
+  ctx.font=`700 ${Math.round(190*S)}px Georgia, "Noto Serif SC", serif`;
+  ctx.fillStyle=rgba(pal.accent,0.28); ctx.textBaseline='top'; ctx.textAlign='left';
+  ctx.fillText('「', pad-14*S, pad*0.62);
+  // content
+  let y=pad+Math.round(120*S);
+  y+=E.titleBlock(y,bw);
+  setLS(ctx,state.ls*S);
+  const aH=authorOf()?Math.round(70*S):0;
+  const fit=fitBody(ctx,state.body||'…',bw,Math.max(10*S,H-y-aH-pad-90*S),state.size*S,state.lh);
+  ctx.font=bodyFont(fit.size); ctx.fillStyle=pal.text;
+  drawLines(ctx,fit.lines,pad,y,bw,fit.lhPx,state.align);
+  y+=fit.lines.length*fit.lhPx;
+  setLS(ctx,0);
+  if(authorOf()){
+    ctx.font=`400 ${Math.round(26*S)}px ${FONTS[0].stack}`; ctx.fillStyle=pal.sub;
+    ctx.textAlign='right'; ctx.textBaseline='top';
+    ctx.fillText('—— '+authorOf(), pad+bw, y+30*S); ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+  // accent underline
+  ctx.fillStyle=pal.accent; ctx.fillRect(pad,y+(authorOf()?96*S:30*S),64*S,5*S);
+  E.markLine(pad,H-pad*0.7,bw);
+}},
+
+/* 3 手帐 journal */
+{k:'journal', draw(ctx,E){
+  const {W,H,S,pal}=E, pad=Math.round(90*S), bw=W-pad*2;
+  ctx.fillStyle=pal.bg; ctx.fillRect(0,0,W,H);
+  // grid
+  ctx.strokeStyle=rgba(pal.line,0.75); ctx.lineWidth=1*S;
+  const step=Math.round(56*S);
+  for(let x=pad*0.4;x<W;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for(let y2=pad*0.4;y2<H;y2+=step){ ctx.beginPath(); ctx.moveTo(0,y2); ctx.lineTo(W,y2); ctx.stroke(); }
+  // dashed frame
+  ctx.save(); ctx.setLineDash([10*S,8*S]); ctx.strokeStyle=pal.sub; ctx.lineWidth=1.6*S;
+  rr(ctx,pad*0.72,pad*0.72,W-pad*1.44,H-pad*1.44,14*S); ctx.stroke(); ctx.restore();
+  // washi tape
+  ctx.save(); ctx.translate(W/2, pad*0.72); ctx.rotate(-0.05);
+  ctx.fillStyle=rgba(pal.accent,0.5); ctx.fillRect(-90*S,-20*S,180*S,44*S);
+  ctx.fillStyle=rgba('#ffffff',0.25);
+  for(let i=-90*S;i<90*S;i+=22*S) ctx.fillRect(i,-20*S,8*S,44*S);
+  ctx.restore();
+  let y=pad+Math.round(60*S);
+  // date top-right
+  ctx.font=`500 ${Math.round(24*S)}px ${FONTS[5].stack}`; ctx.fillStyle=pal.sub; ctx.textAlign='right'; ctx.textBaseline='top';
+  ctx.fillText(todayStr(), pad+bw, pad*0.72+34*S); ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  y+=E.titleBlock(y,bw);
+  setLS(ctx,state.ls*S);
+  const aH=authorOf()?Math.round(60*S):0;
+  const fit=fitBody(ctx,state.body||'…',bw,Math.max(10*S,H-y-aH-pad-100*S),state.size*S,state.lh);
+  ctx.font=bodyFont(fit.size); ctx.fillStyle=pal.text;
+  drawLines(ctx,fit.lines,pad,y,bw,fit.lhPx,state.align);
+  y+=fit.lines.length*fit.lhPx; setLS(ctx,0);
+  if(authorOf()){
+    ctx.font=bodyFont(Math.round(25*S)); ctx.fillStyle=pal.sub;
+    ctx.textAlign=state.align; ctx.textBaseline='top';
+    ctx.fillText('/ '+authorOf(), state.align==='center'?W/2:state.align==='right'?pad+bw:pad, y+26*S);
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+  E.markLine(pad,H-pad*1.0,bw);
+}},
+
+/* 4 日签 daily */
+{k:'daily', draw(ctx,E){
+  const {W,H,S,pal}=E, pad=Math.round(100*S), bw=W-pad*2;
+  ctx.fillStyle=pal.bg; ctx.fillRect(0,0,W,H); noise(ctx,W,H,0.05);
+  const d=new Date();
+  ctx.fillStyle=pal.text; ctx.font=`600 ${Math.round(88*S)}px ${FONTS[0].stack}`;
+  ctx.textBaseline='top';
+  const dateMain=`${String(d.getDate()).padStart(2,'0')}`;
+  const ym=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}`;
+  ctx.fillText(dateMain, pad, pad);
+  ctx.font=`500 ${Math.round(26*S)}px ${FONTS[0].stack}`; ctx.fillStyle=pal.sub;
+  ctx.fillText(ym+(lang==='zh'?` · 星期${t('wd')[d.getDay()]}`:' · '+t('wd').slice(d.getDay()*3,d.getDay()*3+3)), pad, pad+Math.round(104*S));
+  // weekday pill
+  ctx.fillStyle=rgba(pal.accent,0.14);
+  rr(ctx,pad+bw-150*S,pad,150*S,52*S,26*S); ctx.fill();
+  ctx.fillStyle=pal.accent; ctx.font=`600 ${Math.round(24*S)}px ${FONTS[5].stack}`; ctx.textAlign='center';
+  ctx.fillText(lang==='zh'?t('wd')[d.getDay()]:t('wd').slice(d.getDay()*3,d.getDay()*3+3), pad+bw-75*S, pad+16*S);
+  ctx.textAlign='left';
+  // accent bar
+  ctx.fillStyle=pal.accent; ctx.fillRect(pad,pad+Math.round(170*S),72*S,6*S);
+  let y=pad+Math.round(230*S);
+  y+=E.titleBlock(y,bw);
+  setLS(ctx,state.ls*S);
+  const aH=authorOf()?Math.round(60*S):0;
+  const fit=fitBody(ctx,state.body||'…',bw,Math.max(10*S,H-y-aH-pad-110*S),state.size*S*1.04,state.lh);
+  ctx.font=bodyFont(fit.size); ctx.fillStyle=pal.text;
+  drawLines(ctx,fit.lines,pad,y,bw,fit.lhPx,state.align);
+  y+=fit.lines.length*fit.lhPx; setLS(ctx,0);
+  if(authorOf()){
+    ctx.font=`400 ${Math.round(25*S)}px ${FONTS[0].stack}`; ctx.fillStyle=pal.sub;
+    ctx.textAlign='right'; ctx.textBaseline='top';
+    ctx.fillText('—— '+authorOf(), pad+bw, y+26*S); ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+  E.markLine(pad,H-pad*0.85,bw);
+}},
+
+/* 5 竖排 vscroll */
+{k:'vscroll', draw(ctx,E){
+  const {W,H,S,pal}=E, pad=Math.round(110*S);
+  ctx.fillStyle=pal.bg; ctx.fillRect(0,0,W,H); noise(ctx,W,H,0.06);
+  // frame
+  ctx.strokeStyle=pal.line; ctx.lineWidth=1.5*S; ctx.strokeRect(pad*0.5,pad*0.5,W-pad,H-pad);
+  const fs=state.size*S, colGap=fs*1.42, adv=fs*1.16+state.ls*S;
+  const availH=H-pad*2-40*S;
+  const charsPerCol=Math.max(4,Math.floor(availH/adv));
+  const bodyChars=[...(state.body||'…').replace(/\s+/g,'')];
+  const titleChars=[...(state.title||'')];
+  const cols=[];
+  let idx=0;
+  for(let i=0;i<bodyChars.length;i+=charsPerCol) cols.push(bodyChars.slice(i,i+charsPerCol));
+  const titleCol=titleChars.length?titleChars.slice(0,charsPerCol):null;
+  const totalCols=(titleCol?1:0)+cols.length;
+  const maxCols=Math.floor((W-pad*2)/colGap)-1;
+  const showCols=cols.slice(0,Math.max(1,maxCols-(titleCol?1:0)));
+  let x=W-pad-fs*0.5;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  const drawCol=(chars,size,color,weight)=>{
+    ctx.font=`${weight||400} ${Math.round(size)}px ${FONTS.find(f=>f.k===state.font).stack}`;
+    ctx.fillStyle=color;
+    chars.forEach((ch,i)=>ctx.fillText(ch,x,pad+size*0.7+i*adv));
+    x-=colGap;
+  };
+  if(titleCol) drawCol(titleCol,fs*1.12,pal.accent,600);
+  showCols.forEach((col,ci)=>drawCol(col,fs,pal.text,400));
+  // over-limit marker
+  if(cols.length>showCols.length){
+    ctx.font=`400 ${Math.round(22*S)}px ${FONTS[0].stack}`; ctx.fillStyle=pal.sub; ctx.textAlign='left';
+    ctx.fillText('…', Math.max(pad,x+colGap*0.2), pad+30*S);
+  }
+  // seal
+  const sealTxt=(markOf().replace(/^@/,'')[0])||(lang==='zh'?'灵':'I');
+  const ss=Math.round(fs*1.7);
+  const sx=Math.max(pad*0.5+16*S,pad*0.9), sy=H-pad-ss-20*S;
+  ctx.fillStyle=pal.dark?pal.accent:'#b03a2e';
+  rr(ctx,sx,sy,ss,ss,7*S); ctx.fill();
+  ctx.fillStyle='#fff8ef'; ctx.font=`600 ${Math.round(ss*0.56)}px ${FONTS[0].stack}`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(sealTxt,sx+ss/2,sy+ss/2+ss*0.03);
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+}},
+
+/* 6 暗夜 night */
+{k:'night', draw(ctx,E){
+  const {W,H,S,pal}=E, pad=Math.round(100*S), bw=W-pad*2;
+  const base=pal.dark?pal.bg:'#141824';
+  const g=ctx.createLinearGradient(0,0,W,H);
+  g.addColorStop(0,mix(base,pal.accent,0.10)); g.addColorStop(1,mix(base,'#000000',0.35));
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  // glow
+  const rg=ctx.createRadialGradient(W*0.82,H*0.14,0,W*0.82,H*0.14,W*0.75);
+  rg.addColorStop(0,rgba(pal.accent,0.30)); rg.addColorStop(1,rgba(pal.accent,0));
+  ctx.fillStyle=rg; ctx.fillRect(0,0,W,H);
+  // stars (deterministic)
+  const rnd=mulberry32(hashStr('night'+pal.k));
+  ctx.fillStyle='rgba(255,255,255,0.8)';
+  for(let i=0;i<70;i++){
+    const x=rnd()*W, y2=rnd()*H, r=rnd()*1.8*S+0.4*S;
+    ctx.globalAlpha=0.15+rnd()*0.6;
+    ctx.beginPath(); ctx.arc(x,y2,r,0,7); ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  const textC=pal.dark?pal.text:'#eef0fa', subC=pal.dark?pal.sub:'rgba(238,240,250,0.6)';
+  let y=pad;
+  y+=E.titleBlock(y,bw,textC);
+  setLS(ctx,state.ls*S);
+  const aH=authorOf()?Math.round(60*S):0;
+  const fit=fitBody(ctx,state.body||'…',bw,Math.max(10*S,H-y-aH-pad-90*S),state.size*S,state.lh);
+  ctx.font=bodyFont(fit.size); ctx.fillStyle=textC;
+  drawLines(ctx,fit.lines,pad,y,bw,fit.lhPx,state.align);
+  y+=fit.lines.length*fit.lhPx; setLS(ctx,0);
+  if(authorOf()){
+    ctx.font=`400 ${Math.round(25*S)}px ${FONTS[0].stack}`; ctx.fillStyle=subC;
+    ctx.textAlign='right'; ctx.textBaseline='top';
+    ctx.fillText('—— '+authorOf(), pad+bw, y+28*S); ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+  E.markLine(pad,H-pad*0.8,bw,subC);
+}},
+
+/* 7 渐变 gradient */
+{k:'gradient', draw(ctx,E){
+  const {W,H,S,pal}=E, pad=Math.round(96*S);
+  const g=ctx.createLinearGradient(0,0,W,H);
+  g.addColorStop(0,mix(pal.bg,pal.accent,0.16)); g.addColorStop(0.55,mix(pal.bg,pal.accent,0.05)); g.addColorStop(1,mix(pal.bg,pal.accent,0.30));
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  // glass panel
+  const px=pad*0.9, pw=W-px*2, py=pad*0.9, ph=H-py*2;
+  ctx.save();
+  ctx.shadowColor='rgba(30,25,15,0.18)'; ctx.shadowBlur=40*S; ctx.shadowOffsetY=14*S;
+  ctx.fillStyle=pal.dark?'rgba(255,255,255,0.07)':'rgba(255,255,255,0.62)';
+  rr(ctx,px,py,pw,ph,26*S); ctx.fill(); ctx.restore();
+  ctx.strokeStyle=pal.dark?'rgba(255,255,255,0.16)':'rgba(255,255,255,0.9)';
+  ctx.lineWidth=1.5*S; rr(ctx,px,py,pw,ph,26*S); ctx.stroke();
+  const ip=px+Math.round(56*S), bw=pw-Math.round(112*S);
+  let y=py+Math.round(70*S);
+  y+=E.titleBlock(y,bw,pal.text);
+  setLS(ctx,state.ls*S);
+  const aH=authorOf()?Math.round(60*S):0;
+  const fit=fitBody(ctx,state.body||'…',bw,Math.max(10*S,py+ph-Math.round(64*S)-y-aH),state.size*S,state.lh);
+  ctx.font=bodyFont(fit.size); ctx.fillStyle=pal.text;
+  drawLines(ctx,fit.lines,ip,y,bw,fit.lhPx,state.align);
+  y+=fit.lines.length*fit.lhPx; setLS(ctx,0);
+  if(authorOf()){
+    ctx.font=`400 ${Math.round(25*S)}px ${FONTS[0].stack}`; ctx.fillStyle=pal.sub;
+    ctx.textAlign='right'; ctx.textBaseline='top';
+    ctx.fillText('—— '+authorOf(), ip+bw, y+28*S); ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+  E.markLine(ip,py+ph-Math.round(56*S),bw,pal.sub);
+}},
+
+/* 8 杂志 magazine */
+{k:'magazine', draw(ctx,E){
+  const {W,H,S,pal}=E, pad=Math.round(120*S), bw=W-pad*2;
+  ctx.fillStyle=pal.bg; ctx.fillRect(0,0,W,H); noise(ctx,W,H,0.04);
+  // top rule + label
+  ctx.strokeStyle=pal.text; ctx.lineWidth=2.5*S;
+  ctx.beginPath(); ctx.moveTo(pad,pad*0.62); ctx.lineTo(W-pad,pad*0.62); ctx.stroke();
+  ctx.font=`700 ${Math.round(24*S)}px ${FONTS[5].stack}`;
+  ctx.fillStyle=pal.accent; ctx.textBaseline='top';
+  const label=(state.title||'').trim()||(lang==='zh'?'札  记':'N O T E');
+  ctx.fillText(label, pad, pad*0.62+18*S);
+  ctx.font=`500 ${Math.round(22*S)}px ${FONTS[5].stack}`; ctx.fillStyle=pal.sub; ctx.textAlign='right';
+  ctx.fillText(todayStr(), W-pad, pad*0.62+18*S); ctx.textAlign='left';
+  let y=pad+Math.round(50*S);
+  setLS(ctx,state.ls*S);
+  const aH=authorOf()?Math.round(70*S):0;
+  const fit=fitBody(ctx,state.body||'…',bw,Math.max(10*S,H-y-aH-pad-120*S),state.size*S*1.05,state.lh*0.98);
+  ctx.font=bodyFont(fit.size); ctx.fillStyle=pal.text;
+  drawLines(ctx,fit.lines,pad,y,bw,fit.lhPx,'left');
+  y+=fit.lines.length*fit.lhPx; setLS(ctx,0);
+  // drop-cap-like accent bar left of author
+  if(authorOf()){
+    ctx.fillStyle=pal.accent; ctx.fillRect(pad,y+34*S,5*S,34*S);
+    ctx.font=`400 ${Math.round(25*S)}px ${FONTS[0].stack}`; ctx.fillStyle=pal.sub;
+    ctx.textBaseline='top'; ctx.fillText(authorOf(), pad+18*S, y+34*S); ctx.textBaseline='alphabetic';
+  }
+  // bottom rule
+  ctx.strokeStyle=pal.text; ctx.lineWidth=2.5*S;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad*0.72); ctx.lineTo(W-pad,H-pad*0.72); ctx.stroke();
+  E.markLine(pad,H-pad*0.72-36*S,bw,pal.sub);
+}},
+
+/* 9 便利贴 sticky */
+{k:'sticky', draw(ctx,E){
+  const {W,H,S,pal}=E;
+  ctx.fillStyle=pal.bg; ctx.fillRect(0,0,W,H);
+  noise(ctx,W,H,0.05);
+  // note
+  const nw=W*0.78, nh=H*0.72, nx=(W-nw)/2, ny=(H-nh)/2+14*S, rot=-0.022;
+  ctx.save(); ctx.translate(nx+nw/2,ny+nh/2); ctx.rotate(rot);
+  ctx.shadowColor='rgba(40,30,10,0.28)'; ctx.shadowBlur=34*S; ctx.shadowOffsetY=16*S;
+  ctx.fillStyle=mix('#fbf1c7',pal.accent,0.07);
+  rr(ctx,-nw/2,-nh/2,nw,nh,10*S); ctx.fill();
+  ctx.shadowColor='transparent';
+  // subtle fold
+  ctx.fillStyle='rgba(120,90,20,0.07)';
+  ctx.beginPath(); ctx.moveTo(nw/2-52*S,nh/2); ctx.lineTo(nw/2,nh/2-52*S); ctx.lineTo(nw/2,nh/2); ctx.closePath(); ctx.fill();
+  // tape
+  ctx.fillStyle=rgba(pal.accent,0.55); ctx.fillRect(-70*S,-nh/2-24*S,140*S,48*S);
+  const textC='#4a3f24';
+  const bw=nw-110*S, bx=-nw/2+55*S, by=-nh/2+80*S;
+  setLS(ctx,state.ls*S);
+  const aH=authorOf()?Math.round(46*S):0;
+  const fit=fitBody(ctx,state.body||'…',bw,nh-160*S-aH,state.size*S*0.98,state.lh*0.96);
+  ctx.font=bodyFont(fit.size); ctx.fillStyle=textC;
+  drawLines(ctx,fit.lines,bx,by,bw,fit.lhPx,state.align);
+  if(authorOf()){
+    ctx.font=`400 ${Math.round(24*S)}px ${FONTS.find(f=>f.k===state.font).stack}`;
+    ctx.fillStyle=rgba('#4a3f24',0.75); ctx.textAlign='right'; ctx.textBaseline='top';
+    ctx.fillText('—— '+authorOf(), bx+bw, by+fit.lines.length*fit.lhPx+16*S); ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+  ctx.restore(); setLS(ctx,0);
+  // shadow-side mark
+  ctx.font=`400 ${Math.round(22*S)}px ${FONTS[5].stack}`; ctx.fillStyle=rgba(pal.text,0.55);
+  ctx.textAlign='center'; ctx.textBaseline='top';
+  if(markOf()) ctx.fillText(markOf(), W/2, ny+nh+40*S);
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+}},
+
+/* 10 极简 minimal */
+{k:'minimal', draw(ctx,E){
+  const {W,H,S,pal}=E, pad=Math.round(120*S), bw=W-pad*2;
+  ctx.fillStyle=pal.bg; ctx.fillRect(0,0,W,H);
+  // accent dot
+  ctx.fillStyle=pal.accent;
+  ctx.beginPath(); ctx.arc(W/2,pad*0.95,7*S,0,7); ctx.fill();
+  const tH=E.titleBlock(0,bw), aH=authorOf()?Math.round(50*S):0;
+  setLS(ctx,state.ls*S);
+  const fit=fitBody(ctx,state.body||'…',bw,Math.max(10*S,H-pad*2-tH-aH-140*S),state.size*S*0.86,state.lh*1.08);
+  setLS(ctx,state.ls*S);
+  const contentH=tH+fit.lines.length*fit.lhPx+(authorOf()?44*S:0);
+  let y=(H-contentH)/2+10*S;
+  y+=E.titleBlock(y,bw);
+  ctx.font=bodyFont(fit.size); ctx.fillStyle=pal.text;
+  drawLines(ctx,fit.lines,pad,y,bw,fit.lhPx,state.align);
+  y+=fit.lines.length*fit.lhPx; setLS(ctx,0);
+  if(authorOf()){
+    y+=24*S; ctx.font=`400 ${Math.round(24*S)}px ${FONTS[0].stack}`; ctx.fillStyle=pal.sub;
+    ctx.textAlign=state.align; ctx.textBaseline='top';
+    ctx.fillText(authorOf(), state.align==='center'?W/2:state.align==='right'?W-pad:pad, y);
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  }
+  E.markLine(pad,H-pad*0.62,bw);
+}},
+];
+
+/* ---------------- shared title / mark helpers (bound per render) ---------------- */
+function titleBlock(y,bw,forceColor){
+  const title=(state.title||'').trim();
+  if(!title) return 0;
+  const ctx=renderCtx, E=renderEnv;
+  let fs=Math.round(state.size*S_E*0.62);
+  setLS(ctx,Math.max(2,fs*0.18));
+  ctx.font=`600 ${fs}px ${FONTS[0].stack}`;
+  while(fs>14 && ctx.measureText(title).width>bw){ fs-=2; ctx.font=`600 ${fs}px ${FONTS[0].stack}`; }
+  ctx.fillStyle=forceColor||renderEnv.pal.accent; ctx.textAlign=state.align; ctx.textBaseline='top';
+  const x=state.align==='center'?renderEnv.W/2:state.align==='right'?renderEnv.pad+bw:renderEnv.pad;
+  ctx.fillText(title,x,y);
+  setLS(ctx,0); ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  return fs*1.55+Math.round(14*S_E);
+}
+function markLine(x,y,bw,forceColor){
+  const m=markOf(); if(!m) return;
+  const ctx=renderCtx, S=renderEnv.S;
+  ctx.font=`400 ${Math.round(23*S)}px ${FONTS[5].stack}`;
+  ctx.fillStyle=forceColor||rgba(renderEnv.pal.sub,0.85);
+  ctx.textAlign='center'; ctx.textBaseline='top';
+  ctx.fillText(m, renderEnv.W/2, y-Math.round(46*S));
+  ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+}
+let renderCtx=null, renderEnv=null, S_E=1;
+
+/* ---------------- long-image flow renderer ---------------- */
+function renderFlow(ctx,W,H){
+  const S=W/1080, pal=PALETTES[state.pal];
+  const pad=Math.round(110*S), bw=W-pad*2;
+  ctx.fillStyle=pal.bg; ctx.fillRect(0,0,W,H); noise(ctx,W,H,pal.dark?0.05:0.06);
+  // 预测内容高度：不足整卡时垂直居中
+  ctx.font=bodyFont(state.size*S); setLS(ctx,state.ls*S);
+  const preLines=wrapLines(ctx,state.body||'…',bw);
+  const title0=(state.title||'').trim();
+  let contentH=preLines.length*state.size*S*state.lh;
+  if(title0) contentH+=Math.round(state.size*S*0.62)*1.55+14*S;
+  if(authorOf()) contentH+=36*S+34*S+40*S;
+  if(markOf()) contentH+=30*S+26*S+50*S;
+  let y=Math.max(pad,(H-contentH)/2);
+  ctx.fillStyle=pal.accent; ctx.fillRect(pad,Math.round(Math.max(pad*0.72,y-pad*0.28)),64*S,6*S);
+  const E={W,H,S,pal,pad};
+  y+=titleBlock.call(null,y,bw);
+  setLS(ctx,state.ls*S);
+  const fit=fitBody(ctx,state.body||'…',bw,Infinity,state.size*S,state.lh);
+  ctx.font=bodyFont(fit.size); ctx.fillStyle=pal.text;
+  drawLines(ctx,fit.lines,pad,y,bw,fit.lhPx,state.align);
+  y+=fit.lines.length*fit.lhPx; setLS(ctx,0);
+  if(authorOf()){
+    y+=Math.round(36*S);
+    ctx.font=`400 ${Math.round(26*S)}px ${FONTS[0].stack}`; ctx.fillStyle=pal.sub;
+    ctx.textAlign=state.align; ctx.textBaseline='top';
+    ctx.fillText('—— '+authorOf(), state.align==='center'?W/2:state.align==='right'?W-pad:pad, y);
+    ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    y+=Math.round(40*S);
+  }
+  if(markOf()){
+    y+=Math.round(30*S);
+    ctx.font=`400 ${Math.round(23*S)}px ${FONTS[5].stack}`; ctx.fillStyle=rgba(pal.sub,0.85);
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.fillText(markOf(), W/2, y); ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+    y+=Math.round(50*S);
+  }
+  return y+Math.round(30*S); // content end (for auto-height calc, pre-measure variant below)
+}
+/* measure-only pass to compute auto height */
+function measureAutoHeight(){
+  const c=document.createElement('canvas'), ctx=c.getContext('2d');
+  const S=1, pad=110, bw=1080-pad*2;
+  let h=pad*0.72+pad*0+0; // top accent bar area baseline
+  h=110; // pad
+  const title=(state.title||'').trim();
+  if(title){ const fs=Math.round(state.size*0.62); h+=fs*1.55+14; }
+  ctx.font=bodyFont(state.size); setLS(ctx,state.ls);
+  const lines=wrapLines(ctx,state.body||'…',bw);
+  h+=lines.length*state.size*state.lh;
+  if(authorOf()) h+=36+34+40;
+  if(markOf()) h+=30+26+50;
+  return Math.round(Math.max(1500, h+40));
+}
+
+/* ---------------- main render ---------------- */
+const cv=$('#cv'), pctx=cv.getContext('2d');
+function renderPreview(){
+  const pal=PALETTES[state.pal];
+  let W,H;
+  if(state.ratio==='auto'){ W=1080; H=measureAutoHeight(); }
+  else { const r=RATIOS[state.ratio]; W=r.w; H=r.h; }
+  cv.width=W; cv.height=H;
+  renderCtx=pctx; renderEnv={W,H,S:W/1080,pal,pad:Math.round(110*(W/1080))}; S_E=renderEnv.S;
+  pctx.save();
+  const E=renderEnv;
+  E.titleBlock=(y,bw,c)=>titleBlock(y,bw,c);
+  E.markLine=(x,y2,bw,c)=>markLine(x,y2,bw,c);
+  if(state.ratio==='auto') renderFlow(pctx,W,H);
+  else {
+    const tpl=TEMPLATES.find(t2=>t2.k===state.tpl)||TEMPLATES[0];
+    tpl.draw(pctx,E);
+  }
+  pctx.restore();
+  $('#chipSize').textContent=`${W} × ${H}`;
+  updateExportInfo();
+}
+function updateExportInfo(){
+  const W=state.ratio==='auto'?1080:RATIOS[state.ratio].w;
+  const H=state.ratio==='auto'?measureAutoHeight():RATIOS[state.ratio].h;
+  const pieces=state.ratio==='auto'?Math.ceil(H/1440):0;
+  const el=$('#exportInfo');
+  if(lang==='zh'){
+    el.innerHTML=`<b>${t('info1')}</b>：${W} × ${H} px　·　<b>${t('info2')}</b>：${W*state.scale} × ${H*state.scale} px<br><b>${t('info3')}</b>：${pieces?pieces+' '+t('pieces')+' 3:4':t('noSplit')}`;
+  } else {
+    el.innerHTML=`<b>${t('info1')}</b>: ${W} × ${H} px · <b>${t('info2')}</b>: ${W*state.scale} × ${H*state.scale} px<br><b>${t('info3')}</b>: ${pieces?pieces+'× 3:4':t('noSplit')}`;
+  }
+  $('#btnSplit').disabled=!pieces;
+}
+
+/* ---------------- export ---------------- */
+function makeCanvas(scale){
+  const W=(state.ratio==='auto'?1080:RATIOS[state.ratio].w)*scale;
+  const H=(state.ratio==='auto'?measureAutoHeight():RATIOS[state.ratio].h)*scale;
+  const c=document.createElement('canvas'); c.width=W; c.height=H;
+  const ctx=c.getContext('2d');
+  const pal=PALETTES[state.pal];
+  renderCtx=ctx; renderEnv={W,H,S:W/1080,pal,pad:Math.round(110*(W/1080))}; S_E=renderEnv.S;
+  renderEnv.titleBlock=(y,bw,color)=>titleBlock(y,bw,color);
+  renderEnv.markLine=(x,y2,bw,color)=>markLine(x,y2,bw,color);
+  if(state.ratio==='auto') renderFlow(ctx,W,H);
+  else (TEMPLATES.find(t2=>t2.k===state.tpl)||TEMPLATES[0]).draw(ctx,renderEnv);
+  renderCtx=null;
+  return c;
+}
+const toBlob=c=>new Promise(res=>c.toBlob(res,'image/png'));
+function downloadBlob(blob,name){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+const fname=n=>`inspo-card-${n||Date.now()}.png`;
+$('#btnDownload').onclick=async()=>{
+  downloadBlob(await toBlob(makeCanvas(state.scale)), fname());
+  toast(t('saved'));
+};
+$('#btnCopy').onclick=async()=>{
+  try{
+    const blobP=toBlob(makeCanvas(state.scale));
+    await navigator.clipboard.write([new ClipboardItem({'image/png':blobP})]);
+    toast(t('copied'));
+  }catch(e){ toast(t('copyFail')); }
+};
+$('#btnSplit').onclick=async()=>{
+  if(state.ratio!=='auto'){ toast(t('splitNeed')); return; }
+  const H=(state.ratio==='auto'?measureAutoHeight():RATIOS[state.ratio].h);
+  const master=makeCanvas(state.scale);
+  const N=Math.ceil(H/1440);
+  const ph=Math.ceil(H/N)*state.scale;
+  for(let i=0;i<N;i++){
+    const c=document.createElement('canvas');
+    c.width=master.width; c.height=Math.min(ph,master.height-i*ph);
+    c.getContext('2d').drawImage(master,0,-i*ph);
+    downloadBlob(await toBlob(c), fname(i+1));
+    await new Promise(r=>setTimeout(r,400));
+  }
+  toast(t('splitDone')+' · '+N);
+};
+
+/* ---------------- font loading ---------------- */
+function ensureFont(k){
+  const f=FONTS.find(x=>x.k===k);
+  state.font=k;
+  if(f.css && !fontLinks.has(k)){
+    fontLinks.add(k);
+    fontState.busy=true; $('#fontStatus').style.display='inline-block';
+    const link=document.createElement('link');
+    link.rel='stylesheet'; link.href=f.css;
+    document.head.appendChild(link);
+    const sample=(state.body||'灵感')+'灵感卡片 InspoCard 0123';
+    Promise.all([
+      document.fonts.load(`44px "${f.fam}"`, sample),
+      document.fonts.load(`600 44px "${f.fam}"`, sample),
+    ]).catch(()=>{}).finally(()=>{
+      fontState.busy=false; $('#fontStatus').style.display='none';
+      renderAll();
+    });
+  }
+  renderAll();
+}
+
+/* ---------------- UI build ---------------- */
+let lang='zh';
+function initLang(){
+  const q=new URLSearchParams(location.search).get('lang');
+  if(q==='en'||q==='zh') lang=q;
+  else { const saved=localStorage.getItem('inspoLang'); if(saved==='en'||saved==='zh') lang=saved; }
+}
+function applyLang(){
+  document.documentElement.lang = lang==='zh'?'zh-CN':'en';
+  document.title=t('docTitle');
+  $$('[data-i18n]').forEach(el=>{ const v=L[lang][el.dataset.i18n]; if(v!=null) el.textContent=v; });
+  $$('[data-i18n-ph]').forEach(el=>{ const v=L[lang][el.dataset.i18nPh]; if(v!=null) el.placeholder=v; });
+  $('#scaleInfo1').textContent=(lang==='zh'?'1080 宽':'1080 wide');
+  $('#scaleInfo2').textContent=(lang==='zh'?'2160 宽':'2160 wide');
+  localStorage.setItem('inspoLang',lang);
+  history.replaceState(null,'', lang==='zh' ? location.pathname : `?lang=en`);
+  buildTplGrid(); buildPalette(); buildFontGrid(); renderAll();
+}
+$('#btnLang').onclick=()=>{ lang=lang==='zh'?'en':'zh'; applyLang(); };
+
+/* theme: auto follows system at boot; button cycles auto → light → dark */
+function applyTheme(){
+  const saved=localStorage.getItem('inspoTheme');
+  const mode=saved||'auto';
+  const sysDark=matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.dataset.theme = mode==='auto' ? (sysDark?'dark':'light') : mode;
+}
+function cycleTheme(){
+  const cur=localStorage.getItem('inspoTheme')||'auto';
+  const next=cur==='auto'?'light':cur==='light'?'dark':'auto';
+  localStorage.setItem('inspoTheme',next);
+  applyTheme();
+  toast(next==='auto'?(lang==='zh'?'跟随系统':'Auto'):next==='light'?(lang==='zh'?'浅色':'Light'):(lang==='zh'?'深色':'Dark'));
+}
+$('#btnTheme').onclick=cycleTheme;
+applyTheme();
+
+/* tabs */
+function showTab(id){
+  ['Text','Tpl','Style','Exp'].forEach(n=>{
+    $('#tabBtn'+n).classList.toggle('on', n===id);
+    $('#tab'+n).classList.toggle('on', n===id);
+  });
+  if(id==='Tpl') renderThumbs();
+}
+['Text','Tpl','Style','Exp'].forEach(n=>$('#tabBtn'+n).onclick=()=>showTab(n));
+
+/* template grid */
+const tplCanvases=[];
+function buildTplGrid(){
+  const grid=$('#tplGrid'); grid.innerHTML=''; tplCanvases.length=0;
+  TEMPLATES.forEach(tpl=>{
+    const b=document.createElement('button'); b.className='tpl'+(tpl.k===state.tpl?' on':'');
+    const c=document.createElement('canvas'); c.width=270; c.height=360;
+    const n=document.createElement('div'); n.className='tn';
+    b.appendChild(c); b.appendChild(n);
+    b.onclick=()=>{ state.tpl=tpl.k; $$('#tplGrid .tpl').forEach(x=>x.classList.remove('on')); b.classList.add('on'); renderAll(); saveDraft(); };
+    grid.appendChild(b);
+    tplCanvases.push({k:tpl.k, cv:c, label:n});
+  });
+  renderThumbs();
+}
+function renderThumbs(){
+  tplCanvases.forEach(({k,cv,label})=>{
+    label.textContent = t('t_'+k);
+    const ctx=cv.getContext('2d');
+    const pal=PALETTES[state.pal];
+    renderCtx=ctx; renderEnv={W:270,H:360,S:270/1080,pal,pad:Math.round(110*270/1080)}; S_E=renderEnv.S;
+    renderEnv.titleBlock=(y,bw,color)=>titleBlock(y,bw,color);
+    renderEnv.markLine=(x,y2,bw,color)=>markLine(x,y2,bw,color);
+    ctx.clearRect(0,0,270,360);
+    (TEMPLATES.find(x=>x.k===k)||TEMPLATES[0]).draw(ctx,renderEnv);
+    renderCtx=null;
+  });
+}
+
+/* palette */
+function buildPalette(){
+  const row=$('#paletteRow'); row.innerHTML='';
+  PALETTES.forEach((p,i)=>{
+    const b=document.createElement('button');
+    b.className='palBtn'+(i===state.pal?' on':'');
+    b.style.background=p.bg; b.title=lang==='zh'?p.zh:p.en;
+    b.innerHTML=`<span class="dot" style="background:${p.accent}"></span>`;
+    b.onclick=()=>{ state.pal=i; buildPalette(); renderAll(); saveDraft(); };
+    row.appendChild(b);
+  });
+}
+
+/* font grid */
+function buildFontGrid(){
+  const g=$('#fontGrid'); g.innerHTML='';
+  FONTS.forEach(f=>{
+    const b=document.createElement('button');
+    b.className='fontCard'+(f.k===state.font?' on':'');
+    b.innerHTML=`<div class="fn" style="font-family:${f.stack}">${lang==='zh'?f.zh:f.en}</div><div class="fk">${lang==='zh'?f.en:f.zh}</div>`;
+    b.onclick=()=>{ $$('#fontGrid .fontCard').forEach(x=>x.classList.remove('on')); b.classList.add('on'); ensureFont(f.k); saveDraft(); };
+    g.appendChild(b);
+  });
+}
+
+/* generic segmented */
+function bindSeg(id,get,set){
+  $$('#'+id+' button').forEach(b=>{
+    b.classList.toggle('on', b.dataset.v===String(get()));
+    b.onclick=()=>{
+      set(b.dataset.v);
+      $$('#'+id+' button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      renderAll(); saveDraft();
+    };
+  });
+}
+
+/* inputs */
+const rerender=debounce(()=>renderAll(),90);
+$('#bodyInput').addEventListener('input',e=>{ state.body=e.target.value; $('#charCnt').textContent=state.body.length; rerender(); saveDraftSoon(); });
+$('#titleInput').addEventListener('input',e=>{ state.title=e.target.value; rerender(); saveDraftSoon(); });
+$('#authorInput').addEventListener('input',e=>{ state.author=e.target.value; rerender(); saveDraftSoon(); });
+$('#markInput').addEventListener('input',e=>{ state.mark=e.target.value; rerender(); saveDraftSoon(); });
+$('#sizeRange').addEventListener('input',e=>{ state.size=+e.target.value; $('#sizeVal').textContent=state.size; rerender(); saveDraftSoon(); });
+$('#lhRange').addEventListener('input',e=>{ state.lh=+e.target.value/100; $('#lhVal').textContent=(+e.target.value/100).toFixed(2); rerender(); saveDraftSoon(); });
+$('#lsRange').addEventListener('input',e=>{ state.ls=+e.target.value; $('#lsVal').textContent=state.ls; rerender(); saveDraftSoon(); });
+const saveDraftSoon=debounce(saveDraft,500);
+
+/* random inspiration */
+const POOLS={
+zh:[
+ ['从前的日色变得慢，车、马、邮件都慢，一生只够爱一个人。','木心《从前慢》'],
+ ['你若爱，生活哪里都可爱。你若恨，生活哪里都可恨。','丰子恺'],
+ ['且将新火试新茶，诗酒趁年华。','苏轼《望江南》'],
+ ['晚来天欲雪，能饮一杯无？','白居易《问刘十九》'],
+ ['岁月不饶人，我亦未曾饶过岁月。','木心《云雀叫了一整天》'],
+ ['凡是过往，皆为序章。','莎士比亚《暴风雨》'],
+ ['生活不止眼前的苟且，还有诗和远方。','高晓松'],
+ ['我们都在阴沟里，但仍有人仰望星空。','王尔德'],
+ ['白日莫闲过，青春不再来。','《增广贤文》'],
+ ['山川是不卷收的文章，日月为你掌灯伴读。','简媜'],
+ ['人间忽晚，山河已秋。','佚名'],
+ ['黑夜给了我黑色的眼睛，我却用它寻找光明。','顾城《一代人》'],
+],
+en:[
+ ['We are all in the gutter, but some of us are looking at the stars.','Oscar Wilde'],
+ ['Not all those who wander are lost.','J.R.R. Tolkien'],
+ ['In the midst of winter, I found there was, within me, an invincible summer.','Albert Camus'],
+ ['And, when you want something, all the universe conspires in helping you to achieve it.','Paulo Coelho'],
+ ['The only way out is through.','Robert Frost'],
+ ['What we know is a drop, what we don\'t know is an ocean.','Isaac Newton'],
+]};
+$('#btnRandom').onclick=()=>{
+  const pool=POOLS[lang]||POOLS.zh;
+  const [b,a]=pool[Math.floor(Math.random()*pool.length)];
+  state.body=b; state.author=a;
+  $('#bodyInput').value=b; $('#authorInput').value=a;
+  $('#charCnt').textContent=b.length;
+  renderAll(); saveDraft(); toast(t('dice'));
+};
+$('#btnClear').onclick=()=>{
+  state.body=''; state.title=''; state.author='';
+  $('#bodyInput').value=''; $('#titleInput').value=''; $('#authorInput').value='';
+  $('#charCnt').textContent='0';
+  renderAll(); saveDraft(); toast(t('cleared'));
+};
+
+/* draft */
+const DRAFT_KEY='inspoDraft_v1';
+function saveDraft(){
+  try{ localStorage.setItem(DRAFT_KEY, JSON.stringify({...state})); }
+  catch(e){}
+}
+function loadDraft(){
+  try{
+    const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null');
+    if(!d) return;
+    Object.assign(state,d);
+  }catch(e){}
+}
+function syncInputs(){
+  $('#bodyInput').value=state.body; $('#titleInput').value=state.title;
+  $('#authorInput').value=state.author; $('#markInput').value=state.mark;
+  $('#charCnt').textContent=state.body.length;
+  $('#sizeRange').value=state.size; $('#sizeVal').textContent=state.size;
+  $('#lhRange').value=Math.round(state.lh*100); $('#lhVal').textContent=state.lh.toFixed(2);
+  $('#lsRange').value=state.ls; $('#lsVal').textContent=state.ls;
+}
+
+/* ---------------- render all ---------------- */
+function renderAll(){
+  renderPreview();
+  if($('#tabTpl').classList.contains('on')) renderThumbs();
+}
+
+/* ---------------- boot ---------------- */
+initLang();
+loadDraft();
+syncInputs();
+bindSeg('alignSeg', ()=>state.align, v=>state.align=v);
+bindSeg('ratioSeg', ()=>state.ratio, v=>state.ratio=v);
+bindSeg('scaleSeg', ()=>String(state.scale), v=>state.scale=+v);
+applyLang();
+ensureFont(state.font);
+document.fonts.ready.then(()=>renderAll());
+
+/* debug / og handle */
+window.__IC={
+  state, render:renderAll,
+  cv, pctx,
+  dataURL(scale){ return makeCanvas(scale||state.scale).toDataURL('image/png'); },
+  async saveOG(){ document.querySelector('#btnDownload').click(); },
+};
+</script>
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "6a164def7d63477cba60148b8417ca95"}'></script>
+</body>
+</html>
