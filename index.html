@@ -491,7 +491,6 @@ function fitBody(ctx,text,maxW,maxH,base,lh){
   }
   return {lines,size:min,lhPx,clipped};
 }
-window.__lastFit = null; /* debug */
 function drawLines(ctx,lines,x,y,maxW,lhPx,align){
   ctx.textBaseline='top'; ctx.textAlign=align;
   lines.forEach((ln,i)=>ctx.fillText(ln, align==='center'?x+maxW/2 : align==='right'?x+maxW : x, y+i*lhPx));
